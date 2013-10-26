@@ -1,4 +1,3 @@
-
 #pragma once
 #include "block.h"
 
@@ -10,7 +9,7 @@ public:
 	Tower::Tower(unsigned int);
 	~Tower(void);
 private:
-	unsigned int m_blockNumber;
-	std::string m_type;
+	unsigned int m_position;
+	string m_type;
 };
 

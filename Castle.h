@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <ctime> 
 #include "Settings.h"
 #include "block.h"
 #include "wall.h"

@@ -17,7 +17,7 @@ class Block
 		void toString();
 		bool operator < (const Block& b);
 	private:
-		std::string m_type;
+		string m_type;
 		unsigned int m_position;
 		
 };

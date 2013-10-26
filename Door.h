@@ -9,7 +9,7 @@ public:
 	Door(unsigned int);
 	~Door(void);
 private:
-	unsigned int m_blockNumber;
-	std::string m_type;
+	unsigned int m_position;
+	string m_type;
 };
 

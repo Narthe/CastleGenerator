@@ -3,11 +3,11 @@
 
 using namespace std;
 
-Block::Block() : m_type("bloc")
+Block::Block()
 {
 }
 
-Block::Block(unsigned int n) : m_position(n), m_type("bloc")
+Block::Block(unsigned int n) : m_position(n)
 {
 }
 
