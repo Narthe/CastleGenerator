@@ -21,7 +21,7 @@ void Castle::generateWall(SETTINGS settings)
 	for (int i = 0; i < settings.wall_tower_number; i++)
 	{
 		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		t = new Tower(m_positions[pos]);
+		t = new Tower(m_positions[pos], "tower");
 		m_wall.push_back(*t); //on insère dans le vector une nouvelle tour avec la position choisie
 		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
 	}
@@ -31,7 +31,7 @@ void Castle::generateWall(SETTINGS settings)
 	for (int j = 0; j < settings.door_number; j++)
 	{
 		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		d = new Door(m_positions[pos]);
+		d = new Door(m_positions[pos], "door");
 		m_wall.push_back(*d); //on insère dans le vector une nouvelle porte avec la position choisie
 		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
 	}
@@ -42,7 +42,7 @@ void Castle::generateWall(SETTINGS settings)
 	for (unsigned int k = 0; k < wall_number; k++)
 	{
 		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		w = new Wall(m_positions[pos]);
+		w = new Wall(m_positions[pos], "wall");
 		m_wall.push_back(*w); //on insère dans le vector un nouveau mur avec la position choisie
 		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
 	}

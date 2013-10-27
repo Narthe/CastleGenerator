@@ -1,13 +1,12 @@
 #include "Door.h"
 
 
-Door::Door(void) : m_type("door")
+Door::Door(void)
 {
 }
 
-Door::Door(unsigned int n) : Block(n)//, m_type("door")
+Door::Door(unsigned int n, string s) : Block(n, s)
 {
-	m_type = "door";
 }
 
 Door::~Door(void)

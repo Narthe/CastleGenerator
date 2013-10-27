@@ -6,10 +6,8 @@ class Tower :
 {
 public:
 	Tower(void);
-	Tower::Tower(unsigned int);
+	Tower(unsigned int, string);
 	~Tower(void);
 private:
-	unsigned int m_position;
-	string m_type;
 };
 

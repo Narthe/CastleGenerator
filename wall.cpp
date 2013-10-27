@@ -1,12 +1,11 @@
 #include "wall.h"
 
-Wall::Wall() : m_type("wall")
+Wall::Wall()
 {
 }
 
-Wall::Wall(unsigned int n) : Block(n)//, m_type("wall")
+Wall::Wall(unsigned int n, string s) : Block(n, s)
 {
-	m_type = "wall";
 }
 
 Wall::~Wall(void)

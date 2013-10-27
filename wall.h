@@ -6,10 +6,8 @@ class Wall:
 {
 	public:
 		Wall();
-		Wall::Wall(unsigned int n);
+		Wall::Wall(unsigned int n, string);
 		~Wall(void);
 
 	private:
-		string m_type;
-		unsigned int m_position;
 };

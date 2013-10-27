@@ -12,11 +12,11 @@ class Block
 {
 	public:
 		Block();
-		Block(unsigned int n);
+		Block(unsigned int n, string s);
 		~Block(void);
 		void toString();
 		bool operator < (const Block& b);
-	private:
+	protected:
 		string m_type;
 		unsigned int m_position;
 		

@@ -1,12 +1,11 @@
 #include "Tower.h"
 
-Tower::Tower(void) : m_type("tower")
+Tower::Tower(void)
 {
 }
 
-Tower::Tower(unsigned int n) : Block(n), m_type("tower")
+Tower::Tower(unsigned int n, string s) : Block(n, s)
 {
-	//m_type = "tower";
 }
 
 Tower::~Tower(void)

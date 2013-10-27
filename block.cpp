@@ -7,7 +7,7 @@ Block::Block()
 {
 }
 
-Block::Block(unsigned int n) : m_position(n)
+Block::Block(unsigned int n, string s) : m_position(n), m_type(s)
 {
 }
 

@@ -6,10 +6,8 @@ class Door :
 {
 public:
 	Door(void);
-	Door(unsigned int);
+	Door(unsigned int, string);
 	~Door(void);
 private:
-	unsigned int m_position;
-	string m_type;
 };
 
