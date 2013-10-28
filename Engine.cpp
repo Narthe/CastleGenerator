@@ -9,6 +9,7 @@ void Engine::Setup(HWND hWnd)
 {
 
 	//Chargement de la scène
+
 	if ((scene = ReadOBJFile("OBJ/tower.obj")) == NULL)
 	{
 		MessageBox(hWnd, "Impossible de charger la scène", "erreur de chargement", 1);

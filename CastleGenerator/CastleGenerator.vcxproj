@@ -93,6 +93,7 @@
     <ClInclude Include="..\TGALoader.h" />
     <ClInclude Include="..\Tower.h" />
     <ClInclude Include="..\wall.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\block.cpp" />
@@ -105,6 +106,9 @@
     <ClCompile Include="..\TGALoader.cpp" />
     <ClCompile Include="..\Tower.cpp" />
     <ClCompile Include="..\wall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CastleGenerator.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

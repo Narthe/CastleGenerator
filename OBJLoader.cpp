@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_DEPRECATE
 #include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,7 +61,10 @@ SCENE *ReadOBJFile(const char *sFileName, bool bGenerateMissingNormals)
 
 	//--- Open scene file
 
+	//pScene = fopen(sFileName, "r");
+
 	fopen_s(&pScene, sFileName, "r");
+
 	if (!pScene)
 		return(NULL);
 
@@ -702,13 +706,13 @@ static void ExtractParameters(TAG_NAME Tag, const char *pcArgs, void *pData)
 	case TAGNAME_MATLIB:
 		//--- Material library file
 
-		sscanf_s(pcArgs, "%s", pData);
+		sscanf(pcArgs, "%s", pData);
 		break;
 
 	case TAGNAME_VERTEX:
 		//--- Read vertex data
 
-		sscanf_s(pcArgs, "%f %f %f", &(((VERTEX *)pData)->fX), &(((VERTEX *)pData)->fY), &(((VERTEX *)pData)->fZ));
+		sscanf(pcArgs, "%f %f %f", &(((VERTEX *)pData)->fX), &(((VERTEX *)pData)->fY), &(((VERTEX *)pData)->fZ));
 		break;
 
 	case TAGNAME_FACE3:
@@ -851,32 +855,32 @@ static void ExtractParameters(TAG_NAME Tag, const char *pcArgs, void *pData)
 	case TAGNAME_NORMAL:
 		//--- Vertex normal declaration
 
-		sscanf_s(pcArgs, "%f %f %f", &(((VERTEX *)pData)->fX), &(((VERTEX *)pData)->fY), &(((VERTEX *)pData)->fZ));
+		sscanf(pcArgs, "%f %f %f", &(((VERTEX *)pData)->fX), &(((VERTEX *)pData)->fY), &(((VERTEX *)pData)->fZ));
 		break;
 
 	case TAGNAME_TEXTURECOORDS:
 		//--- Texture coordinates declaration
 
 		((TEXTURE_COORDS *)pData)->fV = 0;
-		sscanf_s(pcArgs, "%f %f", &(((TEXTURE_COORDS *)pData)->fU), &(((TEXTURE_COORDS *)pData)->fV));
+		sscanf(pcArgs, "%f %f", &(((TEXTURE_COORDS *)pData)->fU), &(((TEXTURE_COORDS *)pData)->fV));
 		break;
 
 	case TAGNAME_OBJECT:
 		//--- Retrieve associated material
 
-		sscanf_s(pcArgs, "%s", pData);
+		sscanf(pcArgs, "%s", pData);
 		break;
 
 	case TAGNAME_OPACITY:
 		//--- Read material properties
 
-		sscanf_s(pcArgs, "%f", (float *)pData);
+		sscanf(pcArgs, "%f", (float *)pData);
 		break;
 
 	case TAGNAME_SHININESS:
 		//--- Read material properties
 
-		sscanf_s(pcArgs, "%f", (float *)pData);
+		sscanf(pcArgs, "%f", (float *)pData);
 		break;
 
 	case TAGNAME_ILLUMINATION:
@@ -904,20 +908,20 @@ static void ExtractParameters(TAG_NAME Tag, const char *pcArgs, void *pData)
 	case TAGNAME_EMISSION:
 		//--- Read material properties
 
-		sscanf_s(pcArgs, "%f %f %f", (float *)pData, (float *)pData+1, (float *)pData+2);
+		sscanf(pcArgs, "%f %f %f", (float *)pData, (float *)pData+1, (float *)pData+2);
 		((float *)pData)[3] = 1;
 		break;
 
 	case TAGNAME_MATERIAL:
 		//--- Read material filename
 
-		sscanf_s(pcArgs, "%s", pData);
+		sscanf(pcArgs, "%s", pData);
 		break;
 
 	case TAGNAME_TEXTURE:
 		//--- Read texture filename
 
-		sscanf_s(pcArgs, "%s", pData);
+		sscanf(pcArgs, "%s", pData);
 		break;
 	}
 }

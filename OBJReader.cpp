@@ -5,7 +5,6 @@
 #include "GL/GLU.h"
 #include <MMSystem.h>
 #include "Engine.h"
-#include "Castle.h"
 
 //*********************************************************************************
 
@@ -16,8 +15,6 @@
 using namespace std;
 //*********************************************************************************
 Engine MyEngine;
-
-Castle castle;
 HINSTANCE g_hAppInstance;
 HWND g_hAppWnd;
 HDC g_hDC;
@@ -44,16 +41,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	RECT R;
 	float fDT;
 	MyEngine = Engine();
-	castle = Castle();
-
-	//GENERATION DU MUR D'ENCEINTE
-	SETTINGS s;
-	s.wall_length = 20;
-	s.door_number = 3;
-	s.wall_tower_number = 5;
-
-	castle.generateWall(s);
-	castle.toString();
 
 	if (!C3DEngine::GetInstance())
 	{
@@ -67,18 +54,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	//--- Initialize application
 
-	if (!InitInstance (hInstance, nCmdShow))
+	if (!InitInstance(hInstance, nCmdShow))
 		return(FALSE);
 
 	//--- Load scene files
 
-	//C3DEngine::GetInstance()->Setup(g_hAppWnd);
+	C3DEngine::GetInstance()->Setup(g_hAppWnd);
 	//--- Main message loop
 
 	fDT = 0;
 	u32PrevTime = timeGetTime();
 
-	/*while (g_bRun)
+	while (g_bRun)
 	{
 		//--- Messages handling
 
@@ -96,7 +83,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Scene update
 
 		u32Time = timeGetTime();
-		fDT += (u32Time - u32PrevTime)/1000.f;
+		fDT += (u32Time - u32PrevTime) / 1000.f;
 		while (fDT >= REFERENCE_TIME)
 		{
 			C3DEngine::GetInstance()->Update(REFERENCE_TIME);
@@ -108,16 +95,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Buffers swapping
 
 		SwapBuffers(g_hDC);
-	}*/
+	}
 
 	//--- Shutdown renderer
 
-	//C3DEngine::GetInstance()->Shutdown();
+	C3DEngine::GetInstance()->Shutdown();
 
 	//--- Terminate application
 
-	//return((int)Msg.wParam);
-	return 0;
+	return((int)Msg.wParam);
 }
 
 //*********************************************************************************
@@ -136,9 +122,9 @@ ATOM RegisterWindowClass(HINSTANCE hInstance)
 	Class.hInstance = hInstance;
 	Class.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_OBJREADER));
 	Class.hCursor = LoadCursor(NULL, IDC_ARROW);
-	Class.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	Class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	Class.lpszMenuName = NULL;
-	Class.lpszClassName	= WDCLASS_NAME;
+	Class.lpszClassName = WDCLASS_NAME;
 	Class.hIconSm = LoadIcon(Class.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return(RegisterClassEx(&Class));
@@ -149,22 +135,22 @@ ATOM RegisterWindowClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   g_hAppInstance = hInstance;
+	g_hAppInstance = hInstance;
 
-   //--- Create window
+	//--- Create window
 
-   g_hAppWnd = CreateWindow(WDCLASS_NAME, "3D scene renderer", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, g_hAppInstance, NULL);
-   if (!g_hAppWnd)
-      return(FALSE);
+	g_hAppWnd = CreateWindow(WDCLASS_NAME, "3D scene renderer", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, g_hAppInstance, NULL);
+	if (!g_hAppWnd)
+		return(FALSE);
 
-   SetupOpenGL();
+	SetupOpenGL();
 
-   //--- Display window
+	//--- Display window
 
-   ShowWindow(g_hAppWnd, nCmdShow);
-   UpdateWindow(g_hAppWnd);
+	ShowWindow(g_hAppWnd, nCmdShow);
+	UpdateWindow(g_hAppWnd);
 
-   return(TRUE);
+	return(TRUE);
 }
 
 //*********************************************************************************
@@ -198,7 +184,7 @@ void SetupOpenGL(void)
 
 	s32PixelIndex = ChoosePixelFormat(g_hDC, &PFD);
 	if (!s32PixelIndex)
-		s32PixelIndex = 1;	
+		s32PixelIndex = 1;
 
 	//--- Get pixel format description
 
@@ -209,8 +195,8 @@ void SetupOpenGL(void)
 	//--- Set pixel format
 
 	if (s32PixelIndex != GetPixelFormat(g_hDC))
-		if (!SetPixelFormat(g_hDC, s32PixelIndex, &PFD))
-			return;
+	if (!SetPixelFormat(g_hDC, s32PixelIndex, &PFD))
+		return;
 
 	//--- Create GL render context
 
@@ -275,7 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 		//--- Mouse wheel notification
 
-		C3DEngine::GetInstance()->MouseWheel(((float)(short)HIWORD(wParam))/WHEEL_DELTA);
+		C3DEngine::GetInstance()->MouseWheel(((float)(short)HIWORD(wParam)) / WHEEL_DELTA);
 		break;
 
 	case WM_MOUSEMOVE:
