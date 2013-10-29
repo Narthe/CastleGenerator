@@ -29,7 +29,7 @@ public:
 	virtual void updateCamera();
 
 	//other
-	void DrawObject(SCENE *scene,  float shift);
+	void DrawObject(SCENE *scene);
 
 private:
 	float translationMatrix[3];

@@ -2,7 +2,7 @@
 #include "GL/GL.h"
 #include "GL/GLU.h"
 
-#define PAS 1
+#define PAS 10
 using namespace std;
 
 void Engine::Setup(HWND hWnd)
@@ -28,9 +28,9 @@ void Engine::Setup(HWND hWnd)
  	glEnable(GL_LIGHT0);	// Allume la lumière n°1
 
 	//Matrices pour bouger la caméra (la scène en réalité)
-	translationMatrix[0] = 0.0;    //X
-	translationMatrix[1] = -100.0;  //Y
-	translationMatrix[2] = -400.0;	   //Z
+	translationMatrix[0] = -250.0;    //X
+	translationMatrix[1] = -200.0;  //Y
+	translationMatrix[2] = -1000.0;	   //Z
 
 	RotationAngle = 1.3;
 
@@ -93,11 +93,46 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height)
 
 	if (tower && wall && door)
 	{
-		DrawObject(tower, 0.0);
+		DrawObject(tower);
 		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall, 50.0);
+		DrawObject(wall);
 		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(door, 100.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(door);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(tower);
+
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(door);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(tower);
+
+		/*
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(door);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(tower);*/
 	}
 	else
 	{
@@ -165,7 +200,7 @@ void Engine::updateCamera()
 	glRotatef(horizontal, 0, 1, 0);
 }
 
-void Engine::DrawObject(SCENE *scene, float shift)
+void Engine::DrawObject(SCENE *scene)
 {
 	GLfloat ambient[] = { 0.01, 0.01, 0.01, 1.0 };
 	GLfloat specular[] = { 1, 1, 1, 1 };
@@ -211,7 +246,7 @@ void Engine::DrawObject(SCENE *scene, float shift)
 			glBegin(GL_TRIANGLES);
 			for (unsigned int k = 0; k < 3; k++)
 			{
-				//glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU);
+				glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU);
 				glNormal3fv(&scene->pNormals[face->pu32Normals[k]].fX );
 				glVertex3fv(&scene->pVertices[face->pu32Vertices[k]].fX);
 			}
