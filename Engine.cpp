@@ -94,7 +94,9 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height)
 	if (tower && wall && door)
 	{
 		DrawObject(tower, 0.0);
+		glTranslatef(100.0, 0.0, 0.0);
 		DrawObject(wall, 50.0);
+		glTranslatef(100.0, 0.0, 0.0);
 		DrawObject(door, 100.0);
 	}
 	else
@@ -205,14 +207,13 @@ void Engine::DrawObject(SCENE *scene, float shift)
 		for (unsigned int j = object->u32FirstFace; j < object->u32FirstFace + object->u32FacesCount; j++)
 		{
 			FACE * face = &scene->pFaces[j];
-
 			//On va dessiner chaque point de la face et spécifier les normales à opengl
 			glBegin(GL_TRIANGLES);
 			for (unsigned int k = 0; k < 3; k++)
 			{
-				glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU + shift);
-				glNormal3fv(&scene->pNormals[face->pu32Normals[k]].fX + shift);
-				glVertex3fv(&scene->pVertices[face->pu32Vertices[k]].fX + shift);
+				//glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU);
+				glNormal3fv(&scene->pNormals[face->pu32Normals[k]].fX );
+				glVertex3fv(&scene->pVertices[face->pu32Vertices[k]].fX);
 			}
 			glEnd();
 		}
