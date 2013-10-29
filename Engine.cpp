@@ -10,7 +10,7 @@ void Engine::Setup(HWND hWnd)
 
 	//Chargement de la scène
 
-	if ((scene = ReadOBJFile("OBJ/tower.obj")) == NULL)
+	if ((tower = ReadOBJFile("OBJ/tower.obj")) == NULL || (door = ReadOBJFile("OBJ/door.obj")) == NULL || (wall = ReadOBJFile("OBJ/wall.obj")) == NULL)
 	{
 		MessageBox(hWnd, "Impossible de charger la scène", "erreur de chargement", 1);
 		exit(0);
@@ -42,12 +42,12 @@ void Engine::Setup(HWND hWnd)
 	rotate = false;
 	//////////////////////////////////////////////////////
 
-	//Initialisation des textures
+	//Initialisation des textures (à mettre dans une fonction)
 
 
-	for(unsigned int i = 0; i < scene->u32MaterialsCount; i++)
+	for(unsigned int i = 0; i < tower->u32MaterialsCount; i++)
 	{
-		MATERIAL *material = &scene->pMaterials[i];
+		MATERIAL *material = &tower->pMaterials[i];
 		if(material->pDiffuse != NULL)
 		{
 			GLuint nom;
@@ -91,62 +91,11 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height)
 	glLoadIdentity();
 	gluPerspective(60, (double) 640/480, 0.5, 1000);
 
-	if(scene)
+	if (tower && wall && door)
 	{
-
-		GLfloat ambient[] = {0.01,0.01,0.01,1.0};
-		GLfloat specular[] = {1,1,1,1};
-		GLfloat diffuse[] = {1,1,1,1};
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-
-		//On parcourt les objets
-		for (unsigned int i=0 ; i < scene->u32ObjectsCount ;i++)
-		{
-			//On récupère l'objet courant
-			OBJECT * object = &scene->pObjects[i];
-
-			//Chargement du material si l'objet en a un
-			if(object->u32Material != 0xFFFFFFFF)
-			{
-				MATERIAL * material = &scene->pMaterials[object->u32Material];
-				glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,material->pfAmbient);
-				glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,material->pfDiffuse);
-				glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,material->pfSpecular);
-				glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,material->pfEmission);
-				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->fShininess);
-
-				//Chargement de la texture si l'objet en a une
-				if (material->pDiffuse != NULL)
-					glBindTexture(GL_TEXTURE_2D, (GLuint)material->pDiffuse->pUserData);
-			}
-			else 
-			{
-				glMaterialf(GL_FRONT, GL_AMBIENT, 0.1);
-				glMaterialf(GL_FRONT, GL_DIFFUSE, 1);
-				glMaterialf(GL_FRONT, GL_SPECULAR, 1);
-				glMaterialf(GL_FRONT, GL_EMISSION, 0);
-				glMaterialf(GL_FRONT, GL_SHININESS, 0);
-			}
-
-			//On parcourt chaque face de l'objet
-			for(unsigned int j = object->u32FirstFace; j < object->u32FirstFace + object->u32FacesCount; j++)
-			{
-				FACE * face = &scene->pFaces[j];
-			
-				//On va dessiner chaque point de la face et spécifier les normales à opengl
-				glBegin(GL_TRIANGLES);
-					for(unsigned int k = 0; k<3; k++)
-					{
-						glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU);
-						glNormal3fv(&scene->pNormals[face->pu32Normals[k]].fX);
-						glVertex3fv(&scene->pVertices[face->pu32Vertices[k]].fX);
-					}
-				glEnd(); 
-			}
-		}
-		glFlush();
+		DrawObject(tower, 0.0);
+		DrawObject(wall, 50.0);
+		DrawObject(door, 100.0);
 	}
 	else
 	{
@@ -176,30 +125,6 @@ void Engine::KeyDown(int s32VirtualKey)
 	case 0x44: //D
 		translationMatrix[0] += -PAS;
 		break;
-	/*case VK_LEFT:
-		RotationMatrix[0] = 0.0;
-		RotationMatrix[1] = 1.0;
-		RotationMatrix[2] = 0.0;
-		RotationAngle += -1.0;
-		break;
-	case VK_RIGHT:
-		RotationMatrix[0] = 0.0;
-		RotationMatrix[1] = 1.0;
-		RotationMatrix[2] = 0.0;
-		RotationAngle += 1.0;
-		break;
-	case VK_UP:
-		RotationMatrix[0] = 1.0;
-		RotationMatrix[1] = 0.0;
-		RotationMatrix[2] = 0.0;
-		RotationAngle += -1.0;
-		break;
-	case VK_DOWN:
-		RotationMatrix[0] = 1.0;
-		RotationMatrix[1] = 0.0;
-		RotationMatrix[2] = 0.0;
-		RotationAngle += 1.0;
-		break;*/
 	default:
 		break;
 	}
@@ -236,4 +161,61 @@ void Engine::updateCamera()
 	glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
 	glRotatef(vertical, 1, 0, 0);
 	glRotatef(horizontal, 0, 1, 0);
+}
+
+void Engine::DrawObject(SCENE *scene, float shift)
+{
+	GLfloat ambient[] = { 0.01, 0.01, 0.01, 1.0 };
+	GLfloat specular[] = { 1, 1, 1, 1 };
+	GLfloat diffuse[] = { 1, 1, 1, 1 };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+
+	//On parcourt les objets
+	for (unsigned int i = 0; i < scene->u32ObjectsCount; i++)
+	{
+		//On récupère l'objet courant
+		OBJECT * object = &scene->pObjects[i];
+
+		//Chargement du material si l'objet en a un
+		if (object->u32Material != 0xFFFFFFFF)
+		{
+			MATERIAL * material = &scene->pMaterials[object->u32Material];
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material->pfAmbient);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material->pfDiffuse);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->pfSpecular);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, material->pfEmission);
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->fShininess);
+
+			//Chargement de la texture si l'objet en a une
+			if (material->pDiffuse != NULL)
+				glBindTexture(GL_TEXTURE_2D, (GLuint)material->pDiffuse->pUserData);
+		}
+		else
+		{
+			glMaterialf(GL_FRONT, GL_AMBIENT, 0.1);
+			glMaterialf(GL_FRONT, GL_DIFFUSE, 1);
+			glMaterialf(GL_FRONT, GL_SPECULAR, 1);
+			glMaterialf(GL_FRONT, GL_EMISSION, 0);
+			glMaterialf(GL_FRONT, GL_SHININESS, 0);
+		}
+
+		//On parcourt chaque face de l'objet
+		for (unsigned int j = object->u32FirstFace; j < object->u32FirstFace + object->u32FacesCount; j++)
+		{
+			FACE * face = &scene->pFaces[j];
+
+			//On va dessiner chaque point de la face et spécifier les normales à opengl
+			glBegin(GL_TRIANGLES);
+			for (unsigned int k = 0; k < 3; k++)
+			{
+				glTexCoord2fv(&scene->pUV[face->pu32UV[k]].fU + shift);
+				glNormal3fv(&scene->pNormals[face->pu32Normals[k]].fX + shift);
+				glVertex3fv(&scene->pVertices[face->pu32Vertices[k]].fX + shift);
+			}
+			glEnd();
+		}
+	}
+	glFlush();
 }

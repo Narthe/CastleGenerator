@@ -28,6 +28,9 @@ public:
 	virtual void KeyDown(int s32VirtualKey);
 	virtual void updateCamera();
 
+	//other
+	void DrawObject(SCENE *scene,  float shift);
+
 private:
 	float translationMatrix[3];
 	float RotationAngle;
@@ -38,7 +41,8 @@ private:
 
 protected:
 	static Engine *g_pRendererInstance;
-	SCENE *scene;
-	//unsigned int * textures;
+	SCENE *tower;
+	SCENE *wall;
+	SCENE *door;
 };
 
