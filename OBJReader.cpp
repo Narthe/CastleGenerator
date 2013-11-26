@@ -4,7 +4,6 @@
 #include "GL/GL.h"
 #include "GL/GLU.h"
 #include <MMSystem.h>
-#include "Engine.h"
 
 //*********************************************************************************
 
@@ -15,13 +14,14 @@
 using namespace std;
 //*********************************************************************************
 Engine MyEngine;
+Camera MyCamera;
 HINSTANCE g_hAppInstance;
 HWND g_hAppWnd;
 HDC g_hDC;
 HGLRC g_hGLContext;
 BOOL g_bRun = TRUE;
 C3DEngine *C3DEngine::g_pRendererInstance = NULL;
-
+Camera *Camera::g_CameraInstance = NULL;
 
 //*********************************************************************************
 
@@ -41,12 +41,20 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	RECT R;
 	float fDT;
 	MyEngine = Engine();
+	MyCamera = Camera(Vector3D(-250.0, 800.0, -300.0));
 
 	if (!C3DEngine::GetInstance())
 	{
 		MessageBox(NULL, "No 3D renderer defined", "3D error", MB_OK | MB_ICONSTOP);
 		return(0);
 	}
+
+	/*
+	if (!Camera::GetInstance())
+	{
+		MessageBox(NULL, "No camera defined", "camera error", MB_OK | MB_ICONSTOP);
+		return(0);
+	}*/
 
 	//--- Register custom window class
 
@@ -78,7 +86,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Scene refresh
 
 		GetClientRect(g_hAppWnd, &R);
-		C3DEngine::GetInstance()->Render(R.right, R.bottom);
+		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera);
 
 		//--- Scene update
 
@@ -86,7 +94,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		fDT += (u32Time - u32PrevTime) / 1000.f;
 		while (fDT >= REFERENCE_TIME)
 		{
-			C3DEngine::GetInstance()->Update(REFERENCE_TIME);
+			C3DEngine::GetInstance()->Update(REFERENCE_TIME, MyCamera);
 			fDT -= REFERENCE_TIME;
 		}
 
@@ -103,6 +111,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	//--- Terminate application
 
+	//FreeConsole();
 	return((int)Msg.wParam);
 }
 
@@ -261,7 +270,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 		//--- Mouse wheel notification
 
-		C3DEngine::GetInstance()->MouseWheel(((float)(short)HIWORD(wParam)) / WHEEL_DELTA);
+		//C3DEngine::GetInstance()->MouseWheel(((float)(short)HIWORD(wParam)) / WHEEL_DELTA);
 		break;
 
 	case WM_MOUSEMOVE:
@@ -269,7 +278,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		C3DEngine::GetInstance()->MouseMove(Pt);
+		MyCamera.OnMouseMotion(Pt);
 		break;
 
 	case WM_LBUTTONDOWN:
@@ -277,7 +286,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		C3DEngine::GetInstance()->LButtonDown(Pt);
+		//C3DEngine::GetInstance()->LButtonDown(Pt);
 		break;
 
 	case WM_LBUTTONUP:
@@ -285,7 +294,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		C3DEngine::GetInstance()->LButtonUp(Pt);
+		//C3DEngine::GetInstance()->LButtonUp(Pt);
 		break;
 
 	case WM_RBUTTONDOWN:
@@ -293,7 +302,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		C3DEngine::GetInstance()->RButtonDown(Pt);
+		//C3DEngine::GetInstance()->RButtonDown(Pt);
 		break;
 
 	case WM_RBUTTONUP:
@@ -301,11 +310,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		C3DEngine::GetInstance()->RButtonUp(Pt);
+		//C3DEngine::GetInstance()->RButtonUp(Pt);
 		break;
 
 	case WM_KEYDOWN:
-		C3DEngine::GetInstance()->KeyDown((int)wParam);
+		MyCamera.OnKeyDown((int)wParam);
+		break;
+
+	case WM_KEYUP:
+		MyCamera.OnKeyUp((int)wParam);
 		break;
 
 	default:

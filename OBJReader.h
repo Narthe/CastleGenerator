@@ -2,3 +2,4 @@
 
 #include "resource.h"
 #include "Engine.h"
+#include "Camera.h"

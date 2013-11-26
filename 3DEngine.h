@@ -1,8 +1,6 @@
-#ifndef __3DENGINE_H
-#define __3DENGINE_H
-
 #pragma once
 #include "stdafx.h"
+#include "Camera.h"
 
 class C3DEngine
 {
@@ -18,18 +16,19 @@ public:
 
 	//--- Update/render
 
-	virtual void Update(float fDT) {}
-	virtual void Render(unsigned int u32Width, unsigned int u32Height) {}
+	virtual void Update(float fDT, Camera camera) {}
+	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera) {}
 
 	//--- Events notifications
 
-	virtual void MouseWheel(float fIncrement) {}
-	virtual void MouseMove(POINT Pos) {}
-	virtual void LButtonDown(POINT Pos) {}
-	virtual void LButtonUp(POINT Pos) {}
-	virtual void RButtonDown(POINT Pos) {}
-	virtual void RButtonUp(POINT Pos) {}
-	virtual void KeyDown(int s32VirtualKey) {}
+	//virtual void MouseWheel(float fIncrement) {}
+	//virtual void MouseMove(POINT Pos) {}
+	//virtual void LButtonDown(POINT Pos) {}
+	//virtual void LButtonUp(POINT Pos) {}
+	//virtual void RButtonDown(POINT Pos) {}
+	//virtual void RButtonUp(POINT Pos) {}
+	//virtual void KeyDown(int s32VirtualKey) {}
+	//virtual void KeyUp(int s32VirtualKey){}
 
 protected:
 	//--- Constructor
@@ -41,5 +40,3 @@ private:
 
 	static C3DEngine *g_pRendererInstance;
 };
-
-#endif

@@ -1,13 +1,12 @@
 #include "Engine.h"
-#include "GL/GL.h"
-#include "GL/GLU.h"
+#include <iostream>
 
 #define PAS 10
 using namespace std;
 
 void Engine::Setup(HWND hWnd)
 {
-
+	
 	//Chargement de la scène
 
 	if ((tower = ReadOBJFile("OBJ/tower.obj")) == NULL || (door = ReadOBJFile("OBJ/door.obj")) == NULL || (wall = ReadOBJFile("OBJ/wall.obj")) == NULL)
@@ -27,10 +26,10 @@ void Engine::Setup(HWND hWnd)
 	glEnable(GL_LIGHTING);	
  	glEnable(GL_LIGHT0);	// Allume la lumière n°1
 
-	//Matrices pour bouger la caméra (la scène en réalité)
-	translationMatrix[0] = -250.0;    //X
-	translationMatrix[1] = -200.0;  //Y
-	translationMatrix[2] = -1000.0;	   //Z
+	//Matrices pour bouger la caméra
+	translationMatrix[0] = 0.0;    //X
+	translationMatrix[1] = 0.0;  //Y
+	translationMatrix[2] = 0.0;	   //Z
 
 	RotationAngle = 1.3;
 
@@ -72,95 +71,59 @@ void Engine::Setup(HWND hWnd)
 	}
 }
 
-void Engine::Update(float fDT)
+void Engine::Update(float fDT, Camera camera)
 {
+	camera.animate(fDT);
 }
 
-void Engine::Render(unsigned int u32Width, unsigned int u32Height)
+void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera)
 {
+	
 	glClearColor(0, 0, 0, 0);
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	//updateCamera();
+	gluPerspective(60, (double)640 / 480, 0.5, 2000);
+	camera.look();
+	//gluLookAt(-250.0, 800.0, -300.0, 0,0,0, 0, 1, 0);
 
-	//Update Camera
-	updateCamera();
+	DrawCastle();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60, (double) 640/480, 0.5, 1000);
-
-	if (tower && wall && door)
-	{
-		DrawObject(tower);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(door);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(tower);
-
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(door);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(tower);
-
-		/*
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(door);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(tower);*/
-	}
-	else
-	{
-		perror("cannot open file");
-	}
+	//glFlush();
 }
 
+/*
 void Engine::KeyDown(int s32VirtualKey)
 {
 	switch (s32VirtualKey)
 	{
 	case 0x5A: //Z
-		translationMatrix[2] += PAS;
+		KeyStates[KeyConf["forward"]] = true;
+		//translationMatrix[2] += PAS;
 		break;
 	case 0x53: //S
-		translationMatrix[2] += -PAS;
+		KeyStates[KeyConf["backward"]] = true;
+		//translationMatrix[2] += -PAS;
 		break;
 	case VK_SPACE:
-		translationMatrix[1] += -PAS;
+		//translationMatrix[1] += -PAS;
 		break;
 	case VK_LCONTROL:
-		translationMatrix[1] += PAS;
+		//translationMatrix[1] += PAS;
 		break;
 	case 0x51: //Q
-		translationMatrix[0] += PAS;
+		KeyStates[KeyConf["strafleft"]] = true;
+		//translationMatrix[0] += PAS;
 		break;
 	case 0x44: //D
-		translationMatrix[0] += -PAS;
+		KeyStates[KeyConf["strafright"]] = true;
+		//translationMatrix[0] += -PAS;
 		break;
 	default:
 		break;
@@ -184,6 +147,9 @@ void Engine::MouseMove(POINT Pos)
 	oldPos = Pos;
 }
 
+*/
+
+/*
 void Engine::RButtonDown(POINT Pos)
 {
 	rotate = true;
@@ -192,12 +158,13 @@ void Engine::RButtonUp(POINT Pos)
 {
 	rotate = false;
 }
-
+*/
 void Engine::updateCamera()
 {
-	glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
+	gluPerspective(60, (double)640 / 480, 0.5, 2000);
 	glRotatef(vertical, 1, 0, 0);
 	glRotatef(horizontal, 0, 1, 0);
+	glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
 }
 
 void Engine::DrawObject(SCENE *scene)
@@ -253,5 +220,73 @@ void Engine::DrawObject(SCENE *scene)
 			glEnd();
 		}
 	}
-	glFlush();
+	//glFlush();
 }
+
+void Engine::DrawCastle()
+{
+	glPushMatrix();
+
+	if (tower && wall && door)
+	{
+		DrawObject(tower);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(door);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(100.0, 0.0, 0.0);
+		DrawObject(tower);
+
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(door);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(wall);
+		glTranslatef(0.0, 0.0, 100.0);
+		DrawObject(tower);
+
+		/*
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(door);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(wall);
+		glTranslatef(-100.0, 0.0, 0.0);
+		DrawObject(tower);*/
+	}
+	else
+	{
+		perror("cannot open file");
+	}
+	glPopMatrix();
+}
+
+/*
+void Engine::InitKeyConf()
+{
+	KeyConf["forward"] = 0x5A;
+	KeyConf["backward"] = 0x53;
+	KeyConf["strafright"] = 0x44;
+	KeyConf["strafleft"] = 0x51;
+	KeyConf["up"] = VK_SPACE;
+	//KeyConf["down"] = VK_LCONTROL;
+
+}
+
+*/

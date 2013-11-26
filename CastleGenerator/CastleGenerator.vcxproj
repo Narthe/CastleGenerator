@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClInclude Include="..\3DEngine.h" />
     <ClInclude Include="..\block.h" />
+    <ClInclude Include="..\Camera.h" />
     <ClInclude Include="..\Castle.h" />
     <ClInclude Include="..\Door.h" />
     <ClInclude Include="..\Engine.h" />
@@ -92,11 +93,13 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\TGALoader.h" />
     <ClInclude Include="..\Tower.h" />
+    <ClInclude Include="..\Vector3D.h" />
     <ClInclude Include="..\wall.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\block.cpp" />
+    <ClCompile Include="..\Camera.cpp" />
     <ClCompile Include="..\Castle.cpp" />
     <ClCompile Include="..\Door.cpp" />
     <ClCompile Include="..\Engine.cpp" />
@@ -105,6 +108,7 @@
     <ClCompile Include="..\stdafx.cpp" />
     <ClCompile Include="..\TGALoader.cpp" />
     <ClCompile Include="..\Tower.cpp" />
+    <ClCompile Include="..\Vector3D.cpp" />
     <ClCompile Include="..\wall.cpp" />
   </ItemGroup>
   <ItemGroup>

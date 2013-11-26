@@ -10,6 +10,17 @@ Castle::~Castle(void)
 
 }
 
+//Algorithme différent à essayer :
+// Au lieu de la longueur du mur on passe en paramètre les dimensions d'une matrice 2D
+// On part d'une position aléatoire
+//		à chaque itération on avance d'une case : en face, vers la gauche, ou vers la droite
+//		il y a plus de chances d'aller en face que sur les côté
+//		si on prend à gauche ou à droite alors la case sur laquelle on se trouve doit être une tour
+//		si on prend en face alors la case sur laquelle on se trouve doit être un mur
+//		si on prend en face et que les 2 (ou 3, ... à voir) case précédentes sont des murs, alors la case sur laquelle on se trouve doit être une porte
+//		si on rencontre un bloc sur la case suivant alors on arrête l'algorithme
+//
+
 void Castle::generateWall(SETTINGS settings)
 {
 	fillPositions(settings.wall_length); //initialisation liste positions
