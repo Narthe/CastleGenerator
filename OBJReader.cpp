@@ -11,6 +11,27 @@
 
 #define REFERENCE_TIME	0.016f
 
+//*********************************************************************************
+//***********************************MENU UTILS************************************
+//*********************************************************************************
+
+// Add new popup menu
+#define ADDPOPUPMENU(hmenu, string) \
+	HMENU hSubMenu = CreatePopupMenu(); \
+	AppendMenu(hmenu, MF_STRING | MF_POPUP, (UINT)hSubMenu, string);
+
+// Add a menu item
+#define ADDMENUITEM(hmenu, ID, string) \
+	AppendMenu(hSubMenu, MF_STRING, ID, string);
+
+enum
+{
+	ID_FILE_EXIT,
+	ID_FILE_REGENERATE
+};
+
+/**********************************************************************************/
+
 using namespace std;
 //*********************************************************************************
 Engine MyEngine;
@@ -29,6 +50,7 @@ Castle *castle;
 ATOM RegisterWindowClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE hInstance, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+void CreateMainMenu(HWND hWnd);
 void SetupOpenGL(void);
 void ShutdownOpenGL(void);
 
@@ -152,6 +174,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	g_hAppWnd = CreateWindow(WDCLASS_NAME, "3D scene renderer", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, g_hAppInstance, NULL);
 	if (!g_hAppWnd)
 		return(FALSE);
+
+	CreateMainMenu(g_hAppWnd);
 
 	SetupOpenGL();
 
@@ -332,6 +356,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MyCamera.OnKeyUp((int)wParam);
 		break;
 
+	//MENU
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case ID_FILE_EXIT:
+			ShutdownOpenGL();
+			DestroyWindow(g_hAppWnd);
+			break;
+		case ID_FILE_REGENERATE:
+			castle->regenerateWall();
+			break;
+
+		default:
+			break;
+		}
+
 	default:
 		//--- Default message handling
 
@@ -339,5 +379,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return(0);
+}
+
+void CreateMainMenu(HWND hWnd)
+{
+	HMENU hMenu = CreateMenu();
+
+	ADDPOPUPMENU(hMenu, "&File");
+	ADDMENUITEM(hMenu, ID_FILE_EXIT, "&Exit");
+	ADDMENUITEM(hMenu, ID_FILE_REGENERATE, "&Regenerate");
+
+	SetMenu(hWnd, hMenu);
 }
 

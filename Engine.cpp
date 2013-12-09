@@ -102,7 +102,7 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	gluPerspective(60, (double)640 / 480, 0.5, 10000);
 	
 	//camera.look();
-	gluLookAt(-200.0, 1000.0, -250.0, 200,0,200, 0, 1, 0);
+	gluLookAt(-200.0, 4000.0, -250.0, 200,0,200, 0, 1, 0);
 	//updateCamera();
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 

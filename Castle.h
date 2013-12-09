@@ -24,8 +24,10 @@ class Castle
 		Castle(SETTINGS s);
 		~Castle(void);
 		void generateWall();
+		void regenerateWall();
 
 		void initMatrice();
+		void cleanMatrix();
 		void addRectangles();
 		void getPerimeter();
 		void drawMatrice();

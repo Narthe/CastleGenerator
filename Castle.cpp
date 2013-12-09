@@ -23,6 +23,13 @@ void Castle::generateWall()
 	getPerimeter();
 }
 
+void Castle::regenerateWall()
+{
+	cleanMatrix();
+	addRectangles();
+	getPerimeter();
+}
+
 void Castle::initMatrice()
 {
 	m_matrix = new char *[m_settings.matrix_width];
@@ -178,5 +185,14 @@ void Castle::toString()
 		}
 		sprintf_s(buffer, 5, "|\n");
 		OutputDebugString(buffer);
+	}
+}
+
+void Castle::cleanMatrix()
+{
+	for (int i = 0; i < m_settings.matrix_width; i++)
+	{
+		for (int j = 0; j < m_settings.matrix_height; j++)
+			m_matrix[i][j] = ' ';
 	}
 }
