@@ -4,11 +4,16 @@
 #define PAS 10
 using namespace std;
 
+//GLUquadric *quadric = gluNewQuadric();
+//int MatSpec[4] = { 1, 1, 1, 1 };
+int LightPos[4] = { 0, 50, -20, 1 };
+
 void Engine::Setup(HWND hWnd)
 {
 	
 	//Chargement de la scène
 
+	//if ((scene = ReadOBJFile("OBJ/Island_001.obj")) == NULL)
 	if ((tower = ReadOBJFile("OBJ/tower.obj")) == NULL || (door = ReadOBJFile("OBJ/door.obj")) == NULL || (wall = ReadOBJFile("OBJ/wall.obj")) == NULL)
 	{
 		MessageBox(hWnd, "Impossible de charger la scène", "erreur de chargement", 1);
@@ -28,7 +33,7 @@ void Engine::Setup(HWND hWnd)
 
 	//Matrices pour bouger la caméra
 	translationMatrix[0] = 0.0;    //X
-	translationMatrix[1] = 0.0;  //Y
+	translationMatrix[1] = 10.0;  //Y
 	translationMatrix[2] = 0.0;	   //Z
 
 	RotationAngle = 1.3;
@@ -39,11 +44,13 @@ void Engine::Setup(HWND hWnd)
 	horizontal = 0.0;
 	vertical = 0.0;
 	rotate = false;
+
+	
 	//////////////////////////////////////////////////////
 
 	//Initialisation des textures (à mettre dans une fonction)
 
-
+	/*
 	for(unsigned int i = 0; i < tower->u32MaterialsCount; i++)
 	{
 		MATERIAL *material = &tower->pMaterials[i];
@@ -68,33 +75,43 @@ void Engine::Setup(HWND hWnd)
 				break;
 			}
 		}		
-	}
+	}*/
 }
 
 void Engine::Update(float fDT, Camera camera)
 {
-	camera.animate(fDT);
+	//camera.animate(fDT);
 }
 
-void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera)
+void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle)
 {
 	
 	glClearColor(0, 0, 0, 0);
 	glClearDepth(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();	
 
+
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
+	gluPerspective(60, (double)640 / 480, 0.5, 10000);
+	
+	//camera.look();
+	gluLookAt(-200.0, 1000.0, -250.0, 200,0,200, 0, 1, 0);
 	//updateCamera();
-	gluPerspective(60, (double)640 / 480, 0.5, 2000);
-	camera.look();
-	//gluLookAt(-250.0, 800.0, -300.0, 0,0,0, 0, 1, 0);
+	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 
-	DrawCastle();
+	
+	DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
+	//DrawExampleCastle();
 
+	//gluSphere(quadric, 100, 20, 20);
+	//DrawObject(scene);
 	//glFlush();
 }
 
@@ -129,25 +146,23 @@ void Engine::KeyDown(int s32VirtualKey)
 		break;
 	}
 }
+*/
 
 void Engine::MouseMove(POINT Pos) 
 {
-	if (rotate)
-	{
-		if (oldPos.x < Pos.x)
-			horizontal += RotationAngle;
-		else if (oldPos.x > Pos.x)
-			horizontal -= RotationAngle;
+	if (oldPos.x < Pos.x)
+		horizontal += RotationAngle;
+	else if (oldPos.x > Pos.x)
+		horizontal -= RotationAngle;
 
-		if (oldPos.y < Pos.y)
-			vertical += RotationAngle;
-		else if (oldPos.y > Pos.y)
-			vertical -= RotationAngle;
-	}
+	if (oldPos.y < Pos.y)
+		vertical += RotationAngle;
+	else if (oldPos.y > Pos.y)
+		vertical -= RotationAngle;
 	oldPos = Pos;
 }
 
-*/
+
 
 /*
 void Engine::RButtonDown(POINT Pos)
@@ -161,10 +176,10 @@ void Engine::RButtonUp(POINT Pos)
 */
 void Engine::updateCamera()
 {
-	gluPerspective(60, (double)640 / 480, 0.5, 2000);
+	gluPerspective(60, (double)640 / 480, 0.5, 10000);
 	glRotatef(vertical, 1, 0, 0);
 	glRotatef(horizontal, 0, 1, 0);
-	glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
+	//glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
 }
 
 void Engine::DrawObject(SCENE *scene)
@@ -223,58 +238,53 @@ void Engine::DrawObject(SCENE *scene)
 	//glFlush();
 }
 
-void Engine::DrawCastle()
+void Engine::DrawCastle(char **table, int width, int height)
 {
-	glPushMatrix();
+	
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			if (table[i][j] != ' ')
+			{
+				glPushMatrix();
+				if (table[i][j] == 'T')
+				{
+					glTranslatef(i*100.0, 0.0, j*100.0);
+					DrawObject(tower);
+				}
+				else
+				{
+					glTranslatef(i*100.0, 0.0, j*100.0);
+					DrawObject(wall);
+				}
+				glPopMatrix();
+			}
+		}
+	}
+	
+}
 
+void Engine::DrawExampleCastle()
+{
+	
+	//glLoadIdentity();
 	if (tower && wall && door)
 	{
-		DrawObject(tower);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(door);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(100.0, 0.0, 0.0);
-		DrawObject(tower);
-
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(door);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(wall);
-		glTranslatef(0.0, 0.0, 100.0);
-		DrawObject(tower);
-
-		/*
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(door);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(wall);
-		glTranslatef(-100.0, 0.0, 0.0);
-		DrawObject(tower);*/
+		for (int i = 0; i < 10; i++)
+		{
+			glPushMatrix();
+			glTranslatef(i*100.0, 0.0, i*100.0);
+			DrawObject(tower);
+			glPopMatrix();
+		}
+		
 	}
 	else
 	{
 		perror("cannot open file");
 	}
-	glPopMatrix();
+	
 }
 
 /*

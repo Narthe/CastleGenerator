@@ -2,78 +2,181 @@
 
 Castle::Castle(void)
 {
-	
+}
+
+Castle::Castle(SETTINGS s)
+{
+	m_settings = s;
+	initMatrice();
 }
 
 Castle::~Castle(void)
 {
-
+	for (int i = 0; i < m_settings.matrix_width; i++)
+		delete[] m_matrix[i];
+	delete[] m_matrix;
 }
 
-//Algorithme différent à essayer :
-// Au lieu de la longueur du mur on passe en paramètre les dimensions d'une matrice 2D
-// On part d'une position aléatoire
-//		à chaque itération on avance d'une case : en face, vers la gauche, ou vers la droite
-//		il y a plus de chances d'aller en face que sur les côté
-//		si on prend à gauche ou à droite alors la case sur laquelle on se trouve doit être une tour
-//		si on prend en face alors la case sur laquelle on se trouve doit être un mur
-//		si on prend en face et que les 2 (ou 3, ... à voir) case précédentes sont des murs, alors la case sur laquelle on se trouve doit être une porte
-//		si on rencontre un bloc sur la case suivant alors on arrête l'algorithme
-//
-
-void Castle::generateWall(SETTINGS settings)
+void Castle::generateWall()
 {
-	fillPositions(settings.wall_length); //initialisation liste positions
-	int pos;
-	srand((unsigned)time(0));
-
-	Tower *t;
-	//Affectation des positions des tours
-	for (int i = 0; i < settings.wall_tower_number; i++)
-	{
-		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		t = new Tower(m_positions[pos], "tower");
-		m_wall.push_back(*t); //on insère dans le vector une nouvelle tour avec la position choisie
-		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
-	}
-
-	Door *d;
-	//Affectation des positions des portes
-	for (int j = 0; j < settings.door_number; j++)
-	{
-		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		d = new Door(m_positions[pos], "door");
-		m_wall.push_back(*d); //on insère dans le vector une nouvelle porte avec la position choisie
-		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
-	}
-
-	int wall_number = settings.wall_length - settings.door_number - settings.wall_tower_number;
-	Wall *w;
-	//Affectation des positions des murs
-	for (unsigned int k = 0; k < wall_number; k++)
-	{
-		pos = rand() % m_positions.size(); //on récupère une position aléatoire qui n'a pas déjà été choisie
-		w = new Wall(m_positions[pos], "wall");
-		m_wall.push_back(*w); //on insère dans le vector un nouveau mur avec la position choisie
-		m_positions.erase(m_positions.begin() + pos); //on supprime la position de la liste des positions pour éviter tout conflit de position
-	}
-
-	//On trie notre vector selon la position des blocs
-	sort(m_wall.begin(), m_wall.end());
+	addRectangles();
+	getPerimeter();
 }
+
+void Castle::initMatrice()
+{
+	m_matrix = new char *[m_settings.matrix_width];
+	for (int i = 0; i < m_settings.matrix_width; i++)
+	{
+		m_matrix[i] = new char[m_settings.matrix_height];
+	}
+
+	for (int i = 0; i < m_settings.matrix_width; i++)
+	{
+		for (int j = 0; j < m_settings.matrix_height; j++)
+			m_matrix[i][j] = ' ';
+	}
+}
+
+RECT Castle::getRandomRect()
+{
+	int randPosX = m_settings.matrix_width - 1;
+	int randPosY = m_settings.matrix_height - 1;
+
+	int maxWidth = 0;
+	int maxHeight = 0;
+
+	int randWidth = 0;
+	int randHeight = 0;
+
+	srand(time(NULL));
+
+	RECT r;
+	r.left = rand() % randPosX;
+	r.top = rand() % randPosY;
+
+	maxWidth = randPosX - r.left;
+	maxHeight = randPosY - r.top;
+
+	randWidth = rand() % maxWidth + 1;
+	randHeight = rand() % maxHeight + 1;
+
+	r.right = r.left + randWidth;
+	r.bottom = r.top + randHeight;
+
+	return r;
+}
+
+void Castle::addRectangles()
+{
+
+	for (int i = 0; i < m_settings.rect_number; i++)
+	{
+		RECT r = getRandomRect();
+		while (!isColliding(r))
+			r = getRandomRect();
+
+		m_rectangles.push_back(r);
+
+		for (int j = r.left; j <= r.right; j++)
+		{
+			if (j == r.left || j == r.right)
+			{
+				m_matrix[j][r.top] = 'T';
+				m_matrix[j][r.bottom] = 'T';
+			}
+			else
+			{
+				m_matrix[j][r.top] = 'W';
+				m_matrix[j][r.bottom] = 'W';
+			}
+		}
+		for (int k = r.top + 1; k <= r.bottom - 1; k++)
+		{
+			m_matrix[r.left][k] = 'W';
+			m_matrix[r.right][k] = 'W';
+		}
+	}
+}
+
+void Castle::getPerimeter()
+{
+	for (int j = 0; j < m_settings.matrix_width; j++)
+	{
+		for (int k = 0; k < m_settings.matrix_height; k++)
+		{
+			if (m_rectangles.size() > 1 && m_matrix[j][k]){
+				for (int l = 0; l < m_rectangles.size(); ++l)
+				{
+					if ((j > m_rectangles[l].left && j < m_rectangles[l].right) && (k > m_rectangles[l].top && k < m_rectangles[l].bottom))
+						m_matrix[j][k] = ' ';
+					else{
+						if (nbNeighbours(j, k) == 8){
+							POINT p;
+							p.x = j;
+							p.y = k;
+							m_pointsToPop.push_back(p);
+						}
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < m_pointsToPop.size(); i++)
+	{
+		m_matrix[m_pointsToPop[i].x][m_pointsToPop[i].y] = NULL;;
+	}
+}
+
+int Castle::nbNeighbours(int k, int l)
+{
+	int cpt = 0;
+	for (int i = k - 1; i <= k + 1; i++)
+	{
+		if (i >= 0 && i <= (m_settings.matrix_width - 1))
+		{
+			for (int j = l - 1; j <= l + 1; j++)
+			{
+				if (j >= 0 && j <= (m_settings.matrix_height - 1))
+				{
+					if (m_matrix[i][j] == 'W' || m_matrix[i][j] == 'T')
+						cpt++;
+				}
+			}
+		}
+	}
+
+	return cpt - 1;
+}
+
+bool Castle::isColliding(RECT r)
+{
+	for (int j = r.left; j <= r.right; j++)
+	{
+		for (int k = r.top; k <= r.bottom; k++)
+		{
+			for (int l = 0; l < m_rectangles.size(); l++)
+			{
+				if ((j > m_rectangles[l].left && j < m_rectangles[l].right) && (k > m_rectangles[l].top && k < m_rectangles[l].bottom))
+					return true;
+			}
+		}
+	}
+}
+
 
 void Castle::toString()
 {
-	for (int i = 0; i < m_wall.size(); i++)
+	char buffer[5];
+	for (int i = 0; i < m_settings.matrix_width; i++)
 	{
-		m_wall.at(i).toString();
-    }
-}
-
-void Castle::fillPositions(int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		m_positions.push_back(i);
+		for (int j = 0; j < m_settings.matrix_height; j++)
+		{
+			char c = m_matrix[i][j];
+			sprintf_s(buffer, 5, "|_%c_", c);
+			OutputDebugString(buffer);
+		}
+		sprintf_s(buffer, 5, "|\n");
+		OutputDebugString(buffer);
 	}
 }

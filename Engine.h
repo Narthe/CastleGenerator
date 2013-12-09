@@ -4,7 +4,7 @@
 #include "GL/GL.h"
 #include "GL/GLU.h"
 #include <map>
-#include "Camera.h"
+
 
 //using namespace std;
 
@@ -21,14 +21,14 @@ public:
 	//--- Update/render
 
 	void Update(float fDT, Camera camera);
-	void Render(unsigned int u32Width, unsigned int u32Height, Camera camera);
+	void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle);
 	void updateCamera();
 	void InitKeyConf();
 
 	//--- Events notifications
 
 	//virtual void MouseWheel(float fIncrement) {}
-	//virtual void MouseMove(POINT Pos);
+	void MouseMove(POINT Pos);
 	//virtual void LButtonDown(POINT Pos) {}
 	//virtual void LButtonUp(POINT Pos) {}
 	//virtual void RButtonDown(POINT Pos);
@@ -38,7 +38,8 @@ public:
 
 	//other
 	void DrawObject(SCENE *scene);
-	void DrawCastle();
+	void DrawCastle(char **table, int width, int height);
+	void DrawExampleCastle();
 
 private:
 	float translationMatrix[3];
@@ -54,5 +55,6 @@ protected:
 	SCENE *tower;
 	SCENE *wall;
 	SCENE *door;
+	SCENE *scene;
 };
 

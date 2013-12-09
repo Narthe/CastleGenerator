@@ -22,6 +22,7 @@ HGLRC g_hGLContext;
 BOOL g_bRun = TRUE;
 C3DEngine *C3DEngine::g_pRendererInstance = NULL;
 Camera *Camera::g_CameraInstance = NULL;
+Castle *castle;
 
 //*********************************************************************************
 
@@ -41,7 +42,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	RECT R;
 	float fDT;
 	MyEngine = Engine();
-	MyCamera = Camera(Vector3D(-250.0, 800.0, -300.0));
+	//MyCamera = Camera(Vector3D(-250.0, 800.0, -300.0));
 
 	if (!C3DEngine::GetInstance())
 	{
@@ -86,7 +87,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Scene refresh
 
 		GetClientRect(g_hAppWnd, &R);
-		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera);
+		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera, castle);
 
 		//--- Scene update
 
@@ -153,6 +154,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return(FALSE);
 
 	SetupOpenGL();
+
+	SETTINGS settings;
+	settings.matrix_width = 20;
+	settings.matrix_height = 20;
+	settings.rect_number = 5;
+	castle = new Castle(settings);
+
+	//Génération du chateau
+	castle->generateWall();
 
 	//--- Display window
 
@@ -278,7 +288,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Pt.x = (short)LOWORD(lParam);
 		Pt.y = (short)HIWORD(lParam);
-		MyCamera.OnMouseMotion(Pt);
+		C3DEngine::GetInstance()->MouseMove(Pt);
+		//MyCamera.OnMouseMotion(Pt);
 		break;
 
 	case WM_LBUTTONDOWN:

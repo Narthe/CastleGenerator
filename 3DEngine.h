@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Camera.h"
+#include "Castle.h"
 
 class C3DEngine
 {
@@ -17,12 +18,12 @@ public:
 	//--- Update/render
 
 	virtual void Update(float fDT, Camera camera) {}
-	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera) {}
+	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle) {}
 
 	//--- Events notifications
 
 	//virtual void MouseWheel(float fIncrement) {}
-	//virtual void MouseMove(POINT Pos) {}
+	virtual void MouseMove(POINT Pos) {}
 	//virtual void LButtonDown(POINT Pos) {}
 	//virtual void LButtonUp(POINT Pos) {}
 	//virtual void RButtonDown(POINT Pos) {}
