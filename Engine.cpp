@@ -102,11 +102,10 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	gluPerspective(60, (double)640 / 480, 0.5, 10000);
 	
 	//camera.look();
-	gluLookAt(-200.0, 4000.0, -250.0, 200,0,200, 0, 1, 0);
-	//updateCamera();
+	gluLookAt(-100.0, 3000.0, -150.0, 500,0,500, 0, 1, 0);
+	updateCamera();
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 
-	
 	DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
 	//DrawExampleCastle();
 
@@ -176,10 +175,12 @@ void Engine::RButtonUp(POINT Pos)
 */
 void Engine::updateCamera()
 {
-	gluPerspective(60, (double)640 / 480, 0.5, 10000);
+	//gluPerspective(60, (double)640 / 480, 0.5, 10000);
+	glPushMatrix();
 	glRotatef(vertical, 1, 0, 0);
 	glRotatef(horizontal, 0, 1, 0);
 	//glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
+	glPopMatrix();
 }
 
 void Engine::DrawObject(SCENE *scene)

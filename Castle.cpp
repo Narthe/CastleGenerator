@@ -47,16 +47,14 @@ void Castle::initMatrice()
 
 RECT Castle::getRandomRect()
 {
-	int randPosX = m_settings.matrix_width - 1;
-	int randPosY = m_settings.matrix_height - 1;
+	int randPosX = m_settings.matrix_width - 3;
+	int randPosY = m_settings.matrix_height - 3;
 
 	int maxWidth = 0;
 	int maxHeight = 0;
 
 	int randWidth = 0;
 	int randHeight = 0;
-
-	srand(time(NULL));
 
 	RECT r;
 	r.left = rand() % randPosX;
@@ -65,18 +63,18 @@ RECT Castle::getRandomRect()
 	maxWidth = randPosX - r.left;
 	maxHeight = randPosY - r.top;
 
-	randWidth = rand() % maxWidth + 1;
-	randHeight = rand() % maxHeight + 1;
+	randWidth = rand() % maxWidth;
+	randHeight = rand() % maxHeight;
 
-	r.right = r.left + randWidth;
-	r.bottom = r.top + randHeight;
+	r.right = r.left + randWidth + 2;
+	r.bottom = r.top + randHeight + 2;
 
 	return r;
 }
 
 void Castle::addRectangles()
 {
-
+	srand(time(NULL));
 	for (int i = 0; i < m_settings.rect_number; i++)
 	{
 		RECT r = getRandomRect();
@@ -104,6 +102,7 @@ void Castle::addRectangles()
 			m_matrix[r.right][k] = 'W';
 		}
 	}
+	this->toString();
 }
 
 void Castle::getPerimeter()
@@ -133,6 +132,7 @@ void Castle::getPerimeter()
 	{
 		m_matrix[m_pointsToPop[i].x][m_pointsToPop[i].y] = NULL;;
 	}
+	//this->toString();
 }
 
 int Castle::nbNeighbours(int k, int l)
