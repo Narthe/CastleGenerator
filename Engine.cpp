@@ -11,10 +11,11 @@ int LightPos[4] = { 0, 50, -20, 1 };
 void Engine::Setup(HWND hWnd)
 {
 	
-	//Chargement de la scène
-
-	//if ((scene = ReadOBJFile("OBJ/Island_001.obj")) == NULL)
-	if ((tower = ReadOBJFile("OBJ/tower.obj")) == NULL || (door = ReadOBJFile("OBJ/door.obj")) == NULL || (wall = ReadOBJFile("OBJ/wall.obj")) == NULL)
+	if (
+		(tower = ReadOBJFile("OBJ/tower.obj")) == NULL || 
+		(door = ReadOBJFile("OBJ/door.obj")) == NULL || 
+		(wall = ReadOBJFile("OBJ/wall.obj")) == NULL || 
+		(ground = ReadOBJFile("OBJ/ground.obj")) == NULL)
 	{
 		MessageBox(hWnd, "Impossible de charger la scène", "erreur de chargement", 1);
 		exit(0);
@@ -25,7 +26,9 @@ void Engine::Setup(HWND hWnd)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glDisable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_2D);
+
+	//textures
+	initTextures();
 
 	// Activation de l'éclairage
 	glEnable(GL_LIGHTING);	
@@ -49,33 +52,6 @@ void Engine::Setup(HWND hWnd)
 	//////////////////////////////////////////////////////
 
 	//Initialisation des textures (à mettre dans une fonction)
-
-	/*
-	for(unsigned int i = 0; i < tower->u32MaterialsCount; i++)
-	{
-		MATERIAL *material = &tower->pMaterials[i];
-		if(material->pDiffuse != NULL)
-		{
-			GLuint nom;
-			glGenTextures(1,&nom);
-			material->pDiffuse->pUserData = (void *)nom;
-			glBindTexture(GL_TEXTURE_2D, nom);
-			glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-			glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-
-			switch (material->pDiffuse->PixelFormat){
-			case PIXELFORMAT_R8G8B8:
-				glTexImage2D(GL_TEXTURE_2D,0,3,material->pDiffuse->u32Width,material->pDiffuse->u32Height,0,GL_RGB,GL_UNSIGNED_BYTE,material->pDiffuse->pu8Pixels);
-				break;
-			case PIXELFORMAT_R8G8B8A8:
-				glTexImage2D(GL_TEXTURE_2D,0,4,material->pDiffuse->u32Width,material->pDiffuse->u32Height,0,GL_RGBA,GL_UNSIGNED_BYTE,material->pDiffuse->pu8Pixels);
-				break;
-			}
-		}		
-	}*/
 }
 
 void Engine::Update(float fDT, Camera camera)
@@ -95,7 +71,6 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	glLoadIdentity();	
 
 
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
@@ -106,12 +81,10 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	updateCamera();
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 
+	DrawObject(ground);
 	DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
 	//DrawExampleCastle();
 
-	//gluSphere(quadric, 100, 20, 20);
-	//DrawObject(scene);
-	//glFlush();
 }
 
 /*
@@ -286,6 +259,38 @@ void Engine::DrawExampleCastle()
 		perror("cannot open file");
 	}
 	
+}
+
+void Engine::initTextures()
+{
+	/*
+	GLubyte Texture[16] =
+	{
+		0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF,
+		0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0
+	};*/
+	int width, height;
+	unsigned char* image = SOIL_load_image("OBJ/grass.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+
+	glEnable(GL_TEXTURE_2D);
+	GLuint nom;
+	glGenTextures(1, &nom);
+	glBindTexture(GL_TEXTURE_2D, nom);
+
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		image
+	);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 /*

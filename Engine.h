@@ -3,6 +3,7 @@
 #include "OBJLoader.h"
 #include "GL/GL.h"
 #include "GL/GLU.h"
+#include "SOIL.h"
 #include <map>
 
 
@@ -40,6 +41,7 @@ public:
 	void DrawObject(SCENE *scene);
 	void DrawCastle(char **table, int width, int height);
 	void DrawExampleCastle();
+	void initTextures();
 
 private:
 	float translationMatrix[3];
@@ -55,6 +57,7 @@ protected:
 	SCENE *tower;
 	SCENE *wall;
 	SCENE *door;
+	SCENE *ground;
 	SCENE *scene;
 };
 

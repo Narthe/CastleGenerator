@@ -182,7 +182,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	SETTINGS settings;
 	settings.matrix_width = 20;
 	settings.matrix_height = 20;
-	settings.rect_number = 5;
+	settings.rect_number = 3;
 	castle = new Castle(settings);
 
 	//Génération du chateau
