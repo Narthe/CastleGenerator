@@ -18,7 +18,7 @@ public:
 	//--- Update/render
 
 	virtual void Update(float fDT, Camera camera) {}
-	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle) {}
+	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON) {}
 
 	//--- Events notifications
 

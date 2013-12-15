@@ -6,7 +6,7 @@ using namespace std;
 
 //GLUquadric *quadric = gluNewQuadric();
 //int MatSpec[4] = { 1, 1, 1, 1 };
-int LightPos[4] = { 0, 50, -20, 1 };
+int LightPos[4] = { 0, 500, -20, 1 };
 
 void Engine::Setup(HWND hWnd)
 {
@@ -59,7 +59,7 @@ void Engine::Update(float fDT, Camera camera)
 	//camera.animate(fDT);
 }
 
-void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle)
+void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON)
 {
 	
 	glClearColor(0, 0, 0, 0);
@@ -77,11 +77,26 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	gluPerspective(60, (double)640 / 480, 0.5, 10000);
 	
 	//camera.look();
-	gluLookAt(-100.0, 3000.0, -150.0, 500,0,500, 0, 1, 0);
+	//gluLookAt(-100.0, 3000.0, -150.0, 500,0,500, 0, 1, 0);
+	gluLookAt(-100.0, 400.0, -150.0, 500, 0, 500, 0, 1, 0);
 	updateCamera();
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 
+	if (texON)
+	{
+		glEnable(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
+		glClearColor(255, 120, 0, 0);
+		glColor3f(255.0, 0.0, 0.0);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, grass);
 	DrawObject(ground);
+	
+	glBindTexture(GL_TEXTURE_2D, stone);
 	DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
 	//DrawExampleCastle();
 
@@ -270,12 +285,14 @@ void Engine::initTextures()
 		0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0
 	};*/
 	int width, height;
-	unsigned char* image = SOIL_load_image("OBJ/grass.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	unsigned char* texGrass = SOIL_load_image("OBJ/grass.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	unsigned char* texStone = SOIL_load_image("OBJ/stone.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
 
 	glEnable(GL_TEXTURE_2D);
-	GLuint nom;
-	glGenTextures(1, &nom);
-	glBindTexture(GL_TEXTURE_2D, nom);
+	
+	glGenTextures(1, &grass);
+	glGenTextures(1, &stone);
+	glBindTexture(GL_TEXTURE_2D, grass);
 
 	glTexImage2D(
 		GL_TEXTURE_2D,
@@ -286,8 +303,24 @@ void Engine::initTextures()
 		0,
 		GL_RGBA,
 		GL_UNSIGNED_BYTE,
-		image
+		texGrass
 	);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D, stone);
+
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		texStone
+		);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

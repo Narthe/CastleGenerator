@@ -22,7 +22,7 @@ public:
 	//--- Update/render
 
 	void Update(float fDT, Camera camera);
-	void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle);
+	void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON);
 	void updateCamera();
 	void InitKeyConf();
 
@@ -51,6 +51,9 @@ private:
 	float horizontal;
 	float vertical;
 	Camera * camera;
+
+	GLuint grass;
+	GLuint stone;
 
 protected:
 	static Engine *g_pRendererInstance;

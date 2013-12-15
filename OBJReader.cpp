@@ -27,7 +27,8 @@
 enum
 {
 	ID_FILE_EXIT,
-	ID_FILE_REGENERATE
+	ID_FILE_REGENERATE, 
+	ID_FILE_TOGGLE_TEXTURE
 };
 
 /**********************************************************************************/
@@ -44,6 +45,7 @@ BOOL g_bRun = TRUE;
 C3DEngine *C3DEngine::g_pRendererInstance = NULL;
 Camera *Camera::g_CameraInstance = NULL;
 Castle *castle;
+BOOL texON = TRUE;
 
 //*********************************************************************************
 
@@ -109,7 +111,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Scene refresh
 
 		GetClientRect(g_hAppWnd, &R);
-		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera, castle);
+		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera, castle, texON);
 
 		//--- Scene update
 
@@ -182,7 +184,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	SETTINGS settings;
 	settings.matrix_width = 20;
 	settings.matrix_height = 20;
-	settings.rect_number = 3;
+	settings.rect_number = 4;
 	castle = new Castle(settings);
 
 	//Génération du chateau
@@ -367,7 +369,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case ID_FILE_REGENERATE:
 			castle->regenerateWall();
 			break;
-
+		case ID_FILE_TOGGLE_TEXTURE:
+			texON = !texON;
+			break;
 		default:
 			break;
 		}
@@ -388,6 +392,7 @@ void CreateMainMenu(HWND hWnd)
 	ADDPOPUPMENU(hMenu, "&File");
 	ADDMENUITEM(hMenu, ID_FILE_EXIT, "&Exit");
 	ADDMENUITEM(hMenu, ID_FILE_REGENERATE, "&Regenerate");
+	ADDMENUITEM(hMenu, ID_FILE_TOGGLE_TEXTURE, "&Toggle Texture");
 
 	SetMenu(hWnd, hMenu);
 }
