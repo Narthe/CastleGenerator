@@ -8,14 +8,17 @@ using namespace std;
 //int MatSpec[4] = { 1, 1, 1, 1 };
 int LightPos[4] = { 0, 500, -20, 1 };
 
+Engine::Engine(void)
+{
+	//commandes
+	//InitKeyConf();
+}
+
 void Engine::Setup(HWND hWnd)
 {
-	
-	if (
-		(tower = ReadOBJFile("OBJ/tower.obj")) == NULL || 
-		(door = ReadOBJFile("OBJ/door.obj")) == NULL || 
-		(wall = ReadOBJFile("OBJ/wall.obj")) == NULL || 
-		(ground = ReadOBJFile("OBJ/ground.obj")) == NULL)
+
+	//OBJs
+	if ((tower = ReadOBJFile("OBJ/tower.obj")) == NULL || (door = ReadOBJFile("OBJ/door.obj")) == NULL || (wall = ReadOBJFile("OBJ/wall.obj")) == NULL || (ground = ReadOBJFile("OBJ/ground.obj")) == NULL)
 	{
 		MessageBox(hWnd, "Impossible de charger la scène", "erreur de chargement", 1);
 		exit(0);
@@ -39,7 +42,7 @@ void Engine::Setup(HWND hWnd)
 	translationMatrix[1] = 10.0;  //Y
 	translationMatrix[2] = 0.0;	   //Z
 
-	RotationAngle = 1.3;
+	RotationAngle = 10;
 
 	oldPos.x = 0;
 	oldPos.y = 0;
@@ -47,6 +50,13 @@ void Engine::Setup(HWND hWnd)
 	horizontal = 0.0;
 	vertical = 0.0;
 	rotate = false;
+
+	eyeX = -100.0;
+	eyeY = 1000.0;
+	eyeZ = -150.0;
+	lookX = 500.0;
+	lookY = 0.0;
+	lookZ = 500.0;
 
 	
 	//////////////////////////////////////////////////////
@@ -59,7 +69,7 @@ void Engine::Update(float fDT, Camera camera)
 	//camera.animate(fDT);
 }
 
-void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON)
+void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON, bool readyForRedraw)
 {
 	
 	glClearColor(0, 0, 0, 0);
@@ -78,7 +88,7 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	
 	//camera.look();
 	//gluLookAt(-100.0, 3000.0, -150.0, 500,0,500, 0, 1, 0);
-	gluLookAt(-100.0, 400.0, -150.0, 500, 0, 500, 0, 1, 0);
+	gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
 	updateCamera();
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 
@@ -89,44 +99,86 @@ void Engine::Render(unsigned int u32Width, unsigned int u32Height, Camera camera
 	else
 	{
 		glDisable(GL_TEXTURE_2D);
-		glClearColor(255, 120, 0, 0);
-		glColor3f(255.0, 0.0, 0.0);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, grass);
-	DrawObject(ground);
+	//DrawObject(ground);
+	DrawGround();
 	
 	glBindTexture(GL_TEXTURE_2D, stone);
-	DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
+	if(readyForRedraw)
+		DrawCastle(castle->m_matrix, castle->m_settings.matrix_width, castle->m_settings.matrix_height);
 	//DrawExampleCastle();
 
 }
 
-/*
+
 void Engine::KeyDown(int s32VirtualKey)
 {
 	switch (s32VirtualKey)
 	{
 	case 0x5A: //Z
-		KeyStates[KeyConf["forward"]] = true;
+		eyeZ += PAS;
+		//keystates[keyconf["forward"]] = true;
 		//translationMatrix[2] += PAS;
 		break;
 	case 0x53: //S
-		KeyStates[KeyConf["backward"]] = true;
+		eyeZ -= PAS;
+		//keystates[keyconf["backward"]] = true;
+		//translationMatrix[2] += -PAS;
+		break;
+	case VK_SPACE:
+		eyeY += PAS;
+		//translationMatrix[1] += -PAS;
+		//keystates[keyconf["up"]] = true;
+		break;
+	case VK_LCONTROL:
+		eyeY -= PAS;
+		//translationMatrix[1] += PAS;
+		//keystates[keyconf["down"]] = true;
+		break;
+	case 0x51: //Q
+		eyeX -= PAS;
+		//keystates[keyconf["strafleft"]] = true;
+		//translationMatrix[0] += PAS;
+		break;
+	case 0x44: //D
+		eyeX += PAS;
+		//keystates[keyconf["strafright"]] = true;
+		//translationMatrix[0] += -PAS;
+		break;
+	default:
+		break;
+	}
+}
+
+/*
+void Engine::KeyUp(int s32VirtualKey)
+{
+	switch (s32VirtualKey)
+	{
+	case 0x5A: //Z
+		keystates[keyconf["forward"]] = false;
+		//translationMatrix[2] += PAS;
+		break;
+	case 0x53: //S
+		keystates[keyconf["backward"]] = false;
 		//translationMatrix[2] += -PAS;
 		break;
 	case VK_SPACE:
 		//translationMatrix[1] += -PAS;
+		keystates[keyconf["up"]] = false;
 		break;
 	case VK_LCONTROL:
 		//translationMatrix[1] += PAS;
+		keystates[keyconf["down"]] = false;
 		break;
 	case 0x51: //Q
-		KeyStates[KeyConf["strafleft"]] = true;
+		keystates[keyconf["strafleft"]] = false;
 		//translationMatrix[0] += PAS;
 		break;
 	case 0x44: //D
-		KeyStates[KeyConf["strafright"]] = true;
+		keystates[keyconf["strafright"]] = false;
 		//translationMatrix[0] += -PAS;
 		break;
 	default:
@@ -138,14 +190,14 @@ void Engine::KeyDown(int s32VirtualKey)
 void Engine::MouseMove(POINT Pos) 
 {
 	if (oldPos.x < Pos.x)
-		horizontal += RotationAngle;
+		lookX += RotationAngle;
 	else if (oldPos.x > Pos.x)
-		horizontal -= RotationAngle;
+		lookX -= RotationAngle;
 
 	if (oldPos.y < Pos.y)
-		vertical += RotationAngle;
+		lookY += RotationAngle;
 	else if (oldPos.y > Pos.y)
-		vertical -= RotationAngle;
+		lookY -= RotationAngle;
 	oldPos = Pos;
 }
 
@@ -163,10 +215,20 @@ void Engine::RButtonUp(POINT Pos)
 */
 void Engine::updateCamera()
 {
-	//gluPerspective(60, (double)640 / 480, 0.5, 10000);
+	/*
+	if (keystates[keyconf["forward"]])
+		eyeZ += 1; //on avance
+	if (keystates[keyconf["backward"]])
+		eyeZ -= 1; //on recule
+	if (keystates[keyconf["strafe_left"]])
+		eyeX -= 1; //on se déplace sur la gauche
+	if (keystates[keyconf["strafe_right"]])
+		eyeX += 1;
+	*/
 	glPushMatrix();
-	glRotatef(vertical, 1, 0, 0);
-	glRotatef(horizontal, 0, 1, 0);
+	gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
+	//glRotatef(vertical, 1, 0, 0);
+	//glRotatef(horizontal, 0, 1, 0);
 	//glTranslatef(translationMatrix[0], translationMatrix[1], translationMatrix[2]);
 	glPopMatrix();
 }
@@ -284,9 +346,9 @@ void Engine::initTextures()
 		0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF,
 		0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0
 	};*/
-	int width, height;
-	unsigned char* texGrass = SOIL_load_image("OBJ/grass.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
-	unsigned char* texStone = SOIL_load_image("OBJ/stone.jpg", &width, &height, 0, SOIL_LOAD_RGBA);
+	int widthGrass, heightGrass, widthStone, heightStone;
+	unsigned char* texGrass = SOIL_load_image("OBJ/grass.jpg", &widthGrass, &heightGrass, 0, SOIL_LOAD_RGBA);
+	unsigned char* texStone = SOIL_load_image("OBJ/stone.jpg", &widthStone, &heightStone, 0, SOIL_LOAD_RGBA);
 
 	glEnable(GL_TEXTURE_2D);
 	
@@ -298,8 +360,8 @@ void Engine::initTextures()
 		GL_TEXTURE_2D,
 		0,
 		GL_RGBA,
-		width,
-		height,
+		widthGrass,
+		heightGrass,
 		0,
 		GL_RGBA,
 		GL_UNSIGNED_BYTE,
@@ -314,8 +376,8 @@ void Engine::initTextures()
 		GL_TEXTURE_2D,
 		0,
 		GL_RGBA,
-		width,
-		height,
+		widthStone,
+		heightStone,
 		0,
 		GL_RGBA,
 		GL_UNSIGNED_BYTE,
@@ -326,16 +388,34 @@ void Engine::initTextures()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-/*
-void Engine::InitKeyConf()
+void Engine::DrawGround()
 {
-	KeyConf["forward"] = 0x5A;
-	KeyConf["backward"] = 0x53;
-	KeyConf["strafright"] = 0x44;
-	KeyConf["strafleft"] = 0x51;
-	KeyConf["up"] = VK_SPACE;
-	//KeyConf["down"] = VK_LCONTROL;
-
+	for (int i = 0; i < 20; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			glPushMatrix();
+			glTranslatef(i*100.0, 0.0, j*100.0);
+			DrawObject(ground);
+			glPopMatrix();
+		}
+	}
 }
 
-*/
+
+void Engine::InitKeyConf()
+{	
+	keyconf["forward"] = 0x5A;
+	keyconf["backward"] = 0x53;
+	keyconf["strafright"] = 0x44;
+	keyconf["strafleft"] = 0x51;
+	keyconf["up"] = VK_SPACE;
+	keyconf["down"] = VK_LCONTROL;
+	
+	keystates[keyconf["forward"]] = false;
+	keystates[keyconf["backward"]] = false;
+	keystates[keyconf["strafleft"]] = false;
+	keystates[keyconf["strafright"]] = false;
+	keystates[keyconf["up"]] = false;
+	keystates[keyconf["down"]] = false;
+}

@@ -53,13 +53,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\src;D:\Dropbox\Projets\CastleGenerator\SOIL\src;D:\Dropbox\Projets\CastleGenerator\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SOIL.lib;Opengl32.lib;Winmm.lib;Glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Dropbox\Projets\CastleGenerator\SOIL\lib;C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -73,14 +73,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\src;D:\Dropbox\Projets\CastleGenerator\SOIL\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Dropbox\Projets\CastleGenerator\SOIL\lib;C:\Users\Narthe\Dropbox\Projets\CastleGenerator\SOIL\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -99,6 +99,7 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\TGALoader.h" />
     <ClInclude Include="..\Tower.h" />
+    <ClInclude Include="..\Utils.h" />
     <ClInclude Include="..\Vector2D.h" />
     <ClInclude Include="..\Vector3D.h" />
     <ClInclude Include="..\wall.h" />

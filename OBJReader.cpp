@@ -46,6 +46,7 @@ C3DEngine *C3DEngine::g_pRendererInstance = NULL;
 Camera *Camera::g_CameraInstance = NULL;
 Castle *castle;
 BOOL texON = TRUE;
+BOOL readyForRedraw = TRUE;
 
 //*********************************************************************************
 
@@ -111,7 +112,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		//--- Scene refresh
 
 		GetClientRect(g_hAppWnd, &R);
-		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera, castle, texON);
+		C3DEngine::GetInstance()->Render(R.right, R.bottom, MyCamera, castle, texON, readyForRedraw);
 
 		//--- Scene update
 
@@ -351,11 +352,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_KEYDOWN:
-		MyCamera.OnKeyDown((int)wParam);
+		C3DEngine::GetInstance()->KeyDown((int)wParam);
+		//MyCamera.OnKeyDown((int)wParam);
 		break;
 
 	case WM_KEYUP:
-		MyCamera.OnKeyUp((int)wParam);
+		//MyCamera.OnKeyUp((int)wParam);
 		break;
 
 	//MENU
@@ -367,7 +369,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(g_hAppWnd);
 			break;
 		case ID_FILE_REGENERATE:
+			readyForRedraw = FALSE;
 			castle->regenerateWall();
+			readyForRedraw = TRUE;
 			break;
 		case ID_FILE_TOGGLE_TEXTURE:
 			texON = !texON;

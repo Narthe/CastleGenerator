@@ -18,7 +18,7 @@ public:
 	//--- Update/render
 
 	virtual void Update(float fDT, Camera camera) {}
-	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON) {}
+	virtual void Render(unsigned int u32Width, unsigned int u32Height, Camera camera, Castle *castle, bool texON, bool readyForRedraw) {}
 
 	//--- Events notifications
 
@@ -28,7 +28,7 @@ public:
 	//virtual void LButtonUp(POINT Pos) {}
 	//virtual void RButtonDown(POINT Pos) {}
 	//virtual void RButtonUp(POINT Pos) {}
-	//virtual void KeyDown(int s32VirtualKey) {}
+	virtual void KeyDown(int s32VirtualKey) {}
 	//virtual void KeyUp(int s32VirtualKey){}
 
 protected:

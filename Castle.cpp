@@ -191,8 +191,8 @@ void Castle::toString()
 void Castle::cleanMatrix()
 {
 	for (int i = 0; i < m_settings.matrix_width; i++)
-	{
-		for (int j = 0; j < m_settings.matrix_height; j++)
-			m_matrix[i][j] = ' ';
-	}
+		delete[] m_matrix[i];
+	delete[] m_matrix;
+
+	initMatrice();
 }

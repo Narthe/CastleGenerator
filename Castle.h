@@ -1,18 +1,10 @@
 #pragma once
-
+#include <windows.h>
+#include <time.h>
 #include <cmath>
 #include <algorithm>
 #include <ctime> 
 #include "Settings.h"
-//#include "block.h"
-//#include "wall.h"
-//#include "Door.h"
-//#include "Tower.h"
-//#include "Vector2D.h"
-
-#include <windows.h>
-
-#include <time.h>
 #include <vector>
 
 using namespace std;
